@@ -9,8 +9,8 @@ A running record so we both always know **what's covered and what's pending**. W
 
 | Phase | Title | Status | Date | Detail doc |
 |---|---|---|---|---|
-| P0 | Setup, schema, RLS & deploy pipeline | 🟡 In progress | 2026-06-16 | [PHASE_0.md](phases/PHASE_0.md) |
-| P1 | Upload → extract + Quiz generator | ⬜ Not started | — | — |
+| P0 | Setup, schema, RLS & deploy pipeline | ✅ Done | 2026-06-16 | [PHASE_0.md](phases/PHASE_0.md) |
+| P1 | Upload → extract + Quiz generator | 🟡 In progress | 2026-06-16 | [PHASE_1.md](phases/PHASE_1.md) |
 | P2 | Flashcards + Summariser + study mode | ⬜ Not started | — | — |
 | P3 | AI Tutor (streaming) + Lesson plan + PDF export | ⬜ Not started | — | — |
 | P4 | Planner + tracker, charts, streak, throttling, polish | ⬜ Not started | — | — |

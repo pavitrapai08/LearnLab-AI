@@ -1,6 +1,7 @@
-﻿// AI-generated disclaimer shown on every output (P1).
-
 export default function AiDisclaimer() {
-  return null // TODO: implement
+  return (
+    <p className="mt-4 text-center text-xs text-muted-foreground">
+      AI-generated — verify with your textbook.
+    </p>
+  )
 }
-
