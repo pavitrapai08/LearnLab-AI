@@ -76,6 +76,10 @@ export async function POST(req: NextRequest) {
 
     if (!questions?.length) return err('GENERATION_FAILED', 'No questions generated', 500)
 
+    // Map API questionType to DB values (schema constraint uses snake_case).
+    const dbQuestionType =
+      questionType === 'MCQ' ? 'mcq' : questionType === 'TF' ? 'true_false' : 'short_answer'
+
     // Persist quiz (user-scoped write via anon client, RLS applies).
     const { data: quiz, error: dbErr } = await supabase
       .from('quizzes')
@@ -85,7 +89,7 @@ export async function POST(req: NextRequest) {
         subject,
         grade,
         output_language: outputLanguage,
-        question_type: questionType,
+        question_type: dbQuestionType,
         difficulty,
         questions,
       })
