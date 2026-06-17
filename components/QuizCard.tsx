@@ -56,11 +56,15 @@ export default function QuizCard({ quizId, questions, questionType, grade, onCom
   const handleSubmit = () => {
     setSubmitted(true)
     if (questionType !== 'Short') {
-      const score = questions.reduce((acc, q) => acc + (autoScore(q) ? 1 : 0), 0)
+      // Compute score directly — cannot call autoScore() here because setSubmitted is async
+      // and `submitted` is still false in this closure, making autoScore return null.
+      const scoreQ = (q: QuizQuestion) =>
+        (answers[q.id] ?? '').trim().toLowerCase() === q.answer.trim().toLowerCase()
+      const score = questions.reduce((acc, q) => acc + (scoreQ(q) ? 1 : 0), 0)
       const records: AnswerRecord[] = questions.map(q => ({
         questionId: q.id,
         response: answers[q.id] ?? '',
-        points: autoScore(q) ? 1 : 0,
+        points: scoreQ(q) ? 1 : 0,
       }))
       onComplete(score, questions.length, records)
     }
