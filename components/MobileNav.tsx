@@ -29,7 +29,7 @@ export default function MobileNav({ persona }: Props) {
   return (
     <>
       {/* Bottom nav — mobile only */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background lg:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-[100] border-t bg-background lg:hidden">
         <ul className="flex justify-around">
           {items.map(({ href, label, icon: Icon }) => {
             const active = pathname === href
