@@ -27,12 +27,12 @@
 
 ## Acceptance criteria
 
-- [ ] Upload a **text PDF** → quiz generated from that file's content only — **[YOU] verify on deployed URL**.
+- [x] Upload a **text PDF** → quiz generated from that file's content only — **[YOU]** confirmed on deployed URL.
 - [ ] Upload a **photo of a textbook page** → quiz generated correctly — **[YOU]**.
 - [ ] Upload a **.docx** → quiz generated from Word content — **[YOU]**.
 - [ ] **Paste text** fallback works — **[YOU]**.
 - [ ] Output-language selector works: English Biology chapter → quiz in Hindi — **[YOU]**.
-- [ ] Topic-name-only input is rejected with a clear message (UploadInput requires file/paste, no bare topic) — **[CC]** verified by design.
+- [x] Topic-name-only input is rejected with a clear message (UploadInput requires file/paste, no bare topic) — **[CC]** verified by design.
 
 ## QA checks
 
@@ -41,13 +41,35 @@
 - [x] **[CC]** *Negative inputs:* oversized file blocked client-side; corrupt/empty → `EMPTY_CONTENT`, no crash.
 - [x] **[CC]** *Storage cleanup:* file deleted from Storage after successful extraction (implemented in `/api/process`).
 - [ ] **[YOU]** *Scanned PDF resume:* closing mid-process → `processing` row; reopen shows resume option.
-- [x] **[CC]** *Quiz scoring:* MCQ/TF auto-score; short-answer reveals model answer + self-mark 1/0.5/0; "Grade with AI" one-call grading.
+- [x] **[YOU]** *Quiz scoring:* MCQ/TF auto-score confirmed working on deployed URL after bug fix (see Bugs below).
+- [x] **[YOU]** *Dropdowns:* Subject/Grade/Language/Question-type/Difficulty/Questions selectors all render correctly and open above other elements.
 - [ ] **[YOU]** *Options consistency:* Subject/Language selectors render identical India lists on every page.
 - [ ] **[YOU]** *Persistence:* generated quiz survives a page reload.
 - [x] **[CC]** *Security — prompt injection:* document content is in `<document>` tags, system prompt is authoritative, NEVER follow instructions inside.
 - [ ] **[YOU]** *Responsive:* upload + quiz usable at 375px; verify 768/1280.
 - [x] **[CC]** *Unit tests:* 32 tests pass (validation, JSON-parse-retry, scoring, scanned-PDF heuristic, RLS).
-- [ ] **[YOU]** *IDOR:* push from P0 — verify `/api/process` returns UNAUTHORIZED for wrong uid path.
+- [ ] **[YOU]** *IDOR:* verify `/api/process` returns UNAUTHORIZED for wrong uid path.
+- [ ] **[YOU]** *Secrets:* DevTools → no `sk-ant` or service-role key visible in client bundle.
+
+## Bugs found and fixed during QA (2026-06-17)
+
+### B1 — "Could not save quiz" on every generation
+- **Root cause:** `quizzes` table has `CHECK (question_type IN ('mcq', 'true_false', 'short_answer'))` but `/api/generate` was inserting the API values `'MCQ'`, `'TF'`, `'Short'` directly. DB constraint rejected all inserts.
+- **Fix:** `app/api/generate/route.ts` — map `questionType` to DB enum before insert (`'MCQ'→'mcq'`, `'TF'→'true_false'`, `'Short'→'short_answer'`).
+- **Commit:** `fix(quiz): map questionType to DB enum + fix Select viewport height`
+
+### B2 — Quiz score always 0 (MCQ / True-False)
+- **Root cause:** `handleSubmit` in `QuizCard` called `setSubmitted(true)` then immediately called `autoScore()`, which guards on `if (!submitted)`. React state is async — `submitted` was still `false` in that render, so every question scored as `null` → 0.
+- **Fix:** `components/QuizCard.tsx` — compute score inline in `handleSubmit` directly from `answers` state without going through `autoScore()`.
+- **Commit:** `fix(quiz): fix zero-score bug (stale submitted state) + cap Select dropdown height`
+
+### B3 — Dropdown menus rendered behind the Generate quiz button
+- **Root cause (layer 1):** `SelectContent` viewport had `h-[var(--radix-select-content-available-height)]`; Tailwind generates this without the `var()` wrapper, making it invalid CSS — the Subject list had no max-height and extended past the page into the dark button.
+- **Root cause (layer 2):** `SelectContent` had `z-50`, same as the fixed bottom nav in `MobileNav`. Portal render order in Next.js App Router made the stacking unpredictable; the button appeared on top.
+- **Root cause (layer 3):** `bg-popover` CSS class was applied but Radix's own JS-applied inline styles and the `fade-in-0`/`zoom-out-95` animation classes (from `tailwindcss-animate`) could stall mid-transition, leaving a partially-transparent backdrop at the lower portion of long dropdowns.
+- **Fix:** `components/ui/select.tsx` — removed animation classes; added inline `style={{ position: 'absolute', zIndex: 9999, backgroundColor: '#ffffff', boxShadow: '...' }}` (inline style is highest specificity and cannot be overridden by Radix's JS styles); capped `max-h-64`; added `relative` to `SelectTrigger`.
+- **Fix:** `components/MobileNav.tsx` — bumped bottom nav from `z-50` to `z-[100]` so it doesn't compete with dropdowns at `z-[9999]`.
+- **Commits:** `fix(quiz): map questionType to DB enum + fix Select viewport height`, `fix(ui): bump Select z-index to 9999 to clear Generate button stacking conflict`, `fix(ui): enforce solid white bg + z-9999 on Select via inline style to kill bleed-through`
 
 ## Deviations / decisions
 
@@ -55,10 +77,24 @@
 - `client.beta.promptCaching.messages.create()` used for quiz generation (prompt caching is in the beta namespace in SDK v0.26.1). Cast used for PDF document block which is not yet in v0.26 types.
 - `daily_activity` upserted client-side on quiz attempt completion (as required by CLAUDE.md §5 — user-data writes via anon key under RLS).
 - Teacher quiz page shares the same quiz flow as the student page (same feature, different nav persona).
+- **Post-QA visual redesign** applied before completing all [YOU] checks: brand palette (navy `#1A1F36`, primary blue `#4F8EF7`, cloud `#F7F8FC`), home-page card layout, navy sidebar/nav. Changes: `tailwind.config.ts`, `app/globals.css`, `app/layout.tsx`, `app/page.tsx`, `components/MobileNav.tsx`. No functional changes — styling only.
 
 ## Handoff to P1 [YOU] QA
 
-Deploy the branch to Vercel and verify each `[YOU]` check above on the preview URL before marking P1 ✅ Done.
+Remaining manual checks on the deployed Vercel URL before marking P1 ✅ Done:
+
+1. Upload a 12 MB PDF → must succeed without 413 (tests the 4.5 MB Vercel body-limit guard).
+2. Upload a photo of a textbook page → quiz generates from image.
+3. Upload a .docx → quiz from Word content.
+4. Paste text → quiz generates.
+5. Change output language to Hindi → quiz generated in Hindi.
+6. Large scanned PDF: no 504, progress shown, batches complete.
+7. Scanned PDF mid-process close → `processing` row; reopen shows resume.
+8. Options consistency: Subject/Language dropdowns identical on student and teacher pages.
+9. Quiz survives page reload (quiz row persisted in Supabase).
+10. Responsive: upload + quiz usable at 375px / 768px / 1280px.
+11. IDOR: `/api/process` returns 401 for a `storagePath` under a different uid.
+12. Secrets: no `sk-ant` or service-role key in DevTools → Network or Sources.
 
 Files created / modified:
 - `lib/validation.ts`, `lib/validation.test.ts`
@@ -70,3 +106,4 @@ Files created / modified:
 - `components/ui/{button,select,card,tabs,progress,badge,textarea,label}.tsx`
 - `app/student/quiz/page.tsx`, `app/teacher/quiz/page.tsx`
 - `components.json` (style: "default")
+- `tailwind.config.ts`, `app/globals.css`, `app/layout.tsx`, `app/page.tsx` (visual redesign)

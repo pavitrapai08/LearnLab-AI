@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, getVerifiedUser } from '@/lib/supabase/server'
-import { generateQuiz, gradeAnswers } from '@/lib/claude'
+import { generateQuiz, gradeAnswers, generateFlashcards, generateSummary } from '@/lib/claude'
 import type { GradeItem } from '@/lib/claude'
 
 export const maxDuration = 60
@@ -98,6 +98,66 @@ export async function POST(req: NextRequest) {
 
     if (dbErr || !quiz) return err('GENERATION_FAILED', 'Could not save quiz', 500)
     return NextResponse.json({ quizId: quiz.id, questions, questionType, subject, grade, outputLanguage })
+  }
+
+  // ── Flashcard generation ──────────────────────────────────
+  if (type === 'flashcards') {
+    const count = Math.min(Math.max(options?.count ?? 10, 5), 25)
+
+    let cards
+    try {
+      cards = await generateFlashcards({ text: sourceText, subject, grade, outputLanguage, count })
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : ''
+      if (msg === 'PARSE_FAILED') return err('PARSE_FAILED', 'AI returned invalid JSON after retry', 500)
+      return err('GENERATION_FAILED', 'Flashcard generation failed', 500)
+    }
+
+    if (!cards?.length) return err('GENERATION_FAILED', 'No cards generated', 500)
+
+    const { data: deck, error: dbErr } = await supabase
+      .from('flashcard_decks')
+      .insert({
+        session_id: uid,
+        document_id: documentId ?? null,
+        title: `${subject} – ${grade}`,
+        output_language: outputLanguage,
+        cards,
+      })
+      .select('id')
+      .single()
+
+    if (dbErr || !deck) return err('GENERATION_FAILED', 'Could not save flashcard deck', 500)
+    return NextResponse.json({ deckId: deck.id, cards, subject, grade, outputLanguage })
+  }
+
+  // ── Summary generation ────────────────────────────────────
+  if (type === 'summary') {
+    let summary
+    try {
+      summary = await generateSummary({ text: sourceText, subject, grade, outputLanguage })
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : ''
+      if (msg === 'PARSE_FAILED') return err('PARSE_FAILED', 'AI returned invalid JSON after retry', 500)
+      return err('GENERATION_FAILED', 'Summary generation failed', 500)
+    }
+
+    const { data: saved, error: dbErr } = await supabase
+      .from('summaries')
+      .insert({
+        session_id: uid,
+        document_id: documentId ?? null,
+        output_language: outputLanguage,
+        quick_summary: summary.quickSummary,
+        key_points: summary.keyPoints,
+        terms: summary.terms,
+        remember: summary.remember,
+      })
+      .select('id')
+      .single()
+
+    if (dbErr || !saved) return err('GENERATION_FAILED', 'Could not save summary', 500)
+    return NextResponse.json({ summaryId: saved.id, summary, subject, grade, outputLanguage })
   }
 
   // ── AI grading ────────────────────────────────────────────
