@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { BookOpen, RotateCcw, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -12,6 +12,7 @@ import QuizCard from '@/components/QuizCard'
 import type { AnswerRecord } from '@/components/QuizCard'
 import MobileNav from '@/components/MobileNav'
 import AiDisclaimer from '@/components/AiDisclaimer'
+import ExportPDF from '@/components/ExportPDF'
 import type { QuizQuestion } from '@/lib/claude'
 import { createClient } from '@/lib/supabase/client'
 
@@ -29,6 +30,7 @@ export default function StudentQuizPage() {
   const [quiz, setQuiz] = useState<{ id: string; questions: QuizQuestion[]; questionType: 'MCQ' | 'TF' | 'Short' } | null>(null)
   const [score, setScore] = useState<{ score: number; total: number } | null>(null)
   const [error, setError] = useState('')
+  const resultsRef = useRef<HTMLDivElement>(null)
 
   const handleUploadSuccess = useCallback((docId: string) => {
     setDocumentId(docId)
@@ -187,14 +189,18 @@ export default function StudentQuizPage() {
 
           {step === 'results' && score && (
             <section className="flex flex-col items-center gap-4 py-8">
-              <div className="rounded-2xl border bg-card p-8 text-center shadow-sm">
-                <p className="text-4xl font-bold">{score.score} / {score.total}</p>
+              <div ref={resultsRef} className="w-full rounded-2xl border bg-card p-8 text-center shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{subject} · {grade} · {questionType} · {difficulty}</p>
+                <p className="mt-3 text-4xl font-bold">{score.score} / {score.total}</p>
                 <p className="mt-1 text-muted-foreground">{Math.round((score.score / score.total) * 100)}% score</p>
                 <AiDisclaimer />
               </div>
-              <Button onClick={reset} variant="outline" className="gap-2">
-                <RotateCcw className="h-4 w-4" /> Start over
-              </Button>
+              <div className="flex gap-2">
+                <ExportPDF targetRef={resultsRef} filename="quiz-results.pdf" label="Download results" />
+                <Button onClick={reset} variant="outline" className="gap-2">
+                  <RotateCcw className="h-4 w-4" /> Start over
+                </Button>
+              </div>
             </section>
           )}
         </div>

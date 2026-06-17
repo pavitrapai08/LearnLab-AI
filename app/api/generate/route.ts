@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient, getVerifiedUser } from '@/lib/supabase/server'
 import { generateQuiz, gradeAnswers, generateFlashcards, generateSummary } from '@/lib/claude'
 import type { GradeItem } from '@/lib/claude'
+import { generateLessonPlan } from '@/lib/claude-lesson'
 
 export const maxDuration = 60
 
@@ -26,6 +27,8 @@ export async function POST(req: NextRequest) {
       difficulty?: 'easy' | 'medium' | 'hard'
       count?: number
       items?: GradeItem[]
+      topic?: string
+      durationMin?: number
     }
   }
   try {
@@ -36,6 +39,39 @@ export async function POST(req: NextRequest) {
 
   const { type, documentId, text: bodyText, subject, grade, outputLanguage, options } = body
   const supabase = createClient()
+
+  // ── Lesson plan (no document required) ───────────────────
+  if (type === 'lesson') {
+    const topic = options?.topic?.trim()
+    const durationMin = Math.min(Math.max(options?.durationMin ?? 45, 20), 120)
+    if (!topic) return err('BAD_REQUEST', 'Topic is required for lesson plans', 400)
+
+    let plan
+    try {
+      plan = await generateLessonPlan({ subject, grade, topic, durationMin, outputLanguage })
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : ''
+      if (msg === 'PARSE_FAILED') return err('PARSE_FAILED', 'AI returned invalid JSON after retry', 500)
+      return err('GENERATION_FAILED', 'Lesson plan generation failed', 500)
+    }
+
+    const { data: saved, error: dbErr } = await supabase
+      .from('lesson_plans')
+      .insert({
+        session_id: uid,
+        subject,
+        grade,
+        topic,
+        duration_min: durationMin,
+        output_language: outputLanguage,
+        content: plan,
+      })
+      .select('id')
+      .single()
+
+    if (dbErr || !saved) return err('GENERATION_FAILED', 'Could not save lesson plan', 500)
+    return NextResponse.json({ planId: saved.id, plan, subject, grade, outputLanguage })
+  }
 
   // ── Resolve source text ───────────────────────────────────
   let sourceText = bodyText?.trim() ?? ''
