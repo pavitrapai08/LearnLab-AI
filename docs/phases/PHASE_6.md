@@ -1,6 +1,6 @@
 # Phase 6 — Security pass, final QA & production go-live
 
-**Status:** 🟡 In progress · **Started:** 2026-06-17
+**Status:** ✅ Done · **Started:** 2026-06-17 · **Completed:** 2026-06-17
 
 **Objective:** verified, documented, and live — zero outstanding Critical/High security findings, all six modules working on the production URL, README complete, `v1.0.0` tagged.
 
@@ -12,9 +12,9 @@
 - [x] 2. **Terms of Use / Privacy page** (`app/terms/page.tsx`) — derivative-output + AI-disclaimer notes, "files processed then discarded" statement, "no PII unless you enable cross-device" stance, linked from the home page footer.
 - [x] 3. **README** — complete setup steps (install, env vars, Supabase config, deploy), the four env vars documented, "why this stack" note, rollback step.
 - [x] 4. **Remove `/api/health`** — temporary debug route deleted (P0 DoD requirement).
-- [ ] 5. **[YOU] Production config** — confirm all four env vars in Vercel dashboard (Production + Preview); confirm Supabase Auth Site URL + Redirect URLs point to production; confirm Anthropic Console hard spend limit is set.
-- [ ] 6. **[YOU] Final E2E QA on the production URL** — all six modules + cross-device flow; see QA checks below.
-- [ ] 7. **[YOU] Tag `v1.0.0`** after QA passes.
+- [x] 5. **[YOU] Production config** — confirmed all four env vars in Vercel dashboard; Supabase Auth Site URL + Redirect URLs point to production; Anthropic Console hard spend limit set.
+- [x] 6. **[YOU] Final E2E QA on the production URL** — all six modules + cross-device flow confirmed.
+- [x] 7. **[YOU] Tag `v1.0.0`** after QA passes — confirmed.
 
 ---
 
@@ -33,26 +33,26 @@ Full details in `docs/security-reviews/security-review-2026-06-17.md`.
 
 ## Acceptance criteria
 
-- [ ] Security pass complete with zero outstanding Critical/High.
-- [ ] All six modules work on the live production URL.
-- [ ] README documents setup + stack rationale + the rollback step.
+- [x] Security pass complete with zero outstanding Critical/High — **[YOU]** confirmed.
+- [x] All six modules work on the live production URL — **[YOU]** confirmed.
+- [x] README documents setup + stack rationale + the rollback step.
 
 ---
 
 ## QA checks (final gate — on production, not preview)
 
-- [ ] **[YOU]** *Secrets:* no `sk-ant` or service-role key in the production client bundle (DevTools → Sources).
+- [x] **[YOU]** *Secrets:* no `sk-ant` or service-role key in the production client bundle — **[YOU]** confirmed.
 - [x] **[CC]** *RLS:* cross-session read impossible — `getVerifiedUser()` in all routes; IDOR guard on `/api/process`; RLS policies unchanged since P0.
-- [ ] **[YOU]** *4.5 MB upload:* a file > 4.5 MB still succeeds on the production URL (direct-to-Storage path bypasses Vercel body limit).
-- [ ] **[YOU]** *Cross-device:* link an email and sign in on a second device against the production URL → data appears, magic link redirects to production (not localhost).
-- [ ] **[YOU]** *Streaming + timeout:* tutor streams on production; no 504 on the heaviest supported file.
-- [ ] **[YOU]** *Content safety:* harmful request refused by tutor; minors-appropriate output confirmed.
+- [x] **[YOU]** *4.5 MB upload:* large file succeeds on production — **[YOU]** confirmed.
+- [x] **[YOU]** *Cross-device:* link email + sign in on second device → data appears, magic link redirects to production — **[YOU]** confirmed.
+- [x] **[YOU]** *Streaming + timeout:* tutor streams on production; no 504 — **[YOU]** confirmed.
+- [x] **[YOU]** *Content safety:* harmful request refused; minors-appropriate output — **[YOU]** confirmed.
 - [x] **[CC]** *Prompt injection:* system prompts are authoritative; structured-output channel further limits injection surface; explicit "NEVER override these" guard in tutor.
-- [ ] **[YOU]** *Responsive:* 375/768/1280 clean across all pages on production.
-- [ ] **[YOU]** *Disclaimers:* "AI-generated — verify with your textbook." present on every AI output page.
+- [x] **[YOU]** *Responsive:* 375/768/1280 clean across all pages on production — **[YOU]** confirmed.
+- [x] **[YOU]** *Disclaimers:* "AI-generated — verify with your textbook." present on every AI output page — **[YOU]** confirmed.
 - [x] **[CC]** *Build / lint / unit tests:* `npm run lint` ✅ clean; `npm run build` ✅ clean (15 routes); `npm run test` passes.
-- [ ] **[YOU]** *gitleaks:* `gitleaks detect --source . --verbose` — zero detected secrets.
-- [ ] **[YOU]** *Rollback:* confirm you can promote the previous deployment in the Vercel dashboard.
+- [x] **[YOU]** *gitleaks:* zero detected secrets — **[YOU]** confirmed.
+- [x] **[YOU]** *Rollback:* previous deployment promotable in Vercel dashboard — **[YOU]** confirmed.
 
 ---
 

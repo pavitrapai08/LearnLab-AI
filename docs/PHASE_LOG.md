@@ -15,7 +15,7 @@ A running record so we both always know **what's covered and what's pending**. W
 | P3 | AI Tutor (streaming) + Lesson plan + PDF export | ✅ Done | 2026-06-17 | [PHASE_3.md](phases/PHASE_3.md) |
 | P4 | Planner + tracker, charts, streak, throttling, polish | ✅ Done | 2026-06-17 | [PHASE_4.md](phases/PHASE_4.md) |
 | P5 | Cross-device sync (email magic-link / OTP) | ✅ Done | 2026-06-17 | [PHASE_5.md](phases/PHASE_5.md) |
-| P6 | Security pass, final QA & go-live | 🟡 In progress | 2026-06-17 | [PHASE_6.md](phases/PHASE_6.md) |
+| P6 | Security pass, final QA & go-live | ✅ Done | 2026-06-17 | [PHASE_6.md](phases/PHASE_6.md) |
 
 Legend: ⬜ Not started · 🟡 In progress · ✅ Done
 
