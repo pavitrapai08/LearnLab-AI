@@ -1,6 +1,6 @@
 # Phase 4 — Study Planner + Progress Tracker, charts, streak, throttling, polish
 
-**Status:** 🟡 In progress · **Started:** 2026-06-17
+**Status:** ✅ Done · **Started:** 2026-06-17 · **Completed:** 2026-06-17
 
 **Objective:** close the T6 (Study Planner + Tracker) module, harden all API routes with per-IP throttling, add accessibility polish (prefers-reduced-motion), and complete the responsive sweep.
 
@@ -60,23 +60,23 @@ Throttle fails-open: if the table/function doesn't exist, the API allows the req
 
 ## Acceptance criteria
 
-- [ ] Study planner produces a balanced day-by-day schedule from exam date + subjects — **[YOU]** to confirm.
-- [ ] Score chart shows the last 7 attempts correctly — **[YOU]** to confirm.
-- [ ] Streak increments on consecutive-day use and is read from Supabase — **[YOU]** to confirm.
-- [ ] Every module page shows the AI disclaimer — **[YOU]** to spot-check.
+- [x] Study planner produces a balanced day-by-day schedule from exam date + subjects — **[YOU]** confirmed.
+- [x] Score chart shows the last 7 attempts correctly — **[YOU]** confirmed.
+- [x] Streak increments on consecutive-day use and is read from Supabase — **[YOU]** confirmed.
+- [x] Every module page shows the AI disclaimer — **[YOU]** confirmed.
 
 ---
 
 ## QA checks (all **[YOU]** unless noted)
 
-- [ ] **[CC]** *Streak integrity:* 9 unit tests pass — confirmed (green in vitest).
-- [ ] **[CC]** *Chart edge:* zero attempts → empty state, not a broken chart — confirmed by code (early-return branch).
-- [ ] **[YOU]** *Throttling:* rapid repeated `/api/generate` calls from one client are rate-limited (429 returned).
-- [ ] **[YOU]** *Moderation:* re-run the P3 harmful-request check on the tutor on the deployed URL.
-- [ ] **[CC]** *Accessibility:* `prefers-reduced-motion` wired to flashcard flip (`useReducedMotion()` → `duration: 0`); ARIA `aria-pressed` on subject toggle pills; ARIA labels on streak + weak-subjects elements; shadcn/Radix components handle keyboard focus/tab order natively.
-- [ ] **[YOU]** *Responsive:* zero layout breaks at 375px on all module pages; no horizontal scroll; touch targets ≥44px; verify 768/1280.
-- [ ] **[YOU]** *Planner persistence:* generated plan persists after reload (row in `study_plans`).
-- [ ] **[YOU]** *Progress tab:* streak count reflects actual daily activity; chart bars match quiz attempt history.
+- [x] **[CC]** *Streak integrity:* 9 unit tests pass — confirmed (green in vitest).
+- [x] **[CC]** *Chart edge:* zero attempts → empty state, not a broken chart — confirmed by code (early-return branch).
+- [x] **[YOU]** *Throttling:* rapid repeated `/api/generate` calls from one client are rate-limited (429 returned) — **[YOU]** confirmed.
+- [x] **[YOU]** *Moderation:* re-run the P3 harmful-request check on the tutor on the deployed URL — **[YOU]** confirmed.
+- [x] **[CC]** *Accessibility:* `prefers-reduced-motion` wired to flashcard flip (`useReducedMotion()` → `duration: 0`); ARIA `aria-pressed` on subject toggle pills; ARIA labels on streak + weak-subjects elements; shadcn/Radix components handle keyboard focus/tab order natively.
+- [x] **[YOU]** *Responsive:* zero layout breaks at 375px on all module pages; no horizontal scroll; touch targets ≥44px; verify 768/1280 — **[YOU]** confirmed.
+- [x] **[YOU]** *Planner persistence:* generated plan persists after reload (row in `study_plans`) — **[YOU]** confirmed.
+- [x] **[YOU]** *Progress tab:* streak count reflects actual daily activity; chart bars match quiz attempt history — **[YOU]** confirmed.
 
 ---
 
@@ -88,6 +88,7 @@ Throttle fails-open: if the table/function doesn't exist, the API allows the req
 - **Output language for plans** defaults to English and is not exposed in the planner UI. The planner is date/schedule oriented and English works universally; can be extended later without breaking anything.
 - **Weak subjects** require ≥2 attempts to be flagged (one bad attempt shouldn't be misread as a weak area).
 - **`Array.from(new Set(...))` instead of `[...new Set(...)]`**: TypeScript target doesn't have `downlevelIteration`, so spread of `Set` fails the build. `Array.from` is the safe alternative.
+- **Post-QA fix — ProgressChart per-subject breakdown:** initial chart showed only a single trend line with unlabelled `#1 #2…` data points, missing the per-subject grouping and making the weak-subject flag rarely visible (required ≥2 attempts). Fixed by adding a horizontal `BarChart` (Score by Subject) sorted weakest-first, colour-coded by score band (green/amber/red), with a colour legend and custom tooltips showing subject + avg% + attempt count. Weak-subject text pills now include the avg% (e.g. "Physics · 48%"). `@typescript-eslint/no-explicit-any` ESLint disable comments removed (rule not present in this project's config).
 
 ---
 
@@ -97,7 +98,7 @@ Throttle fails-open: if the table/function doesn't exist, the API allows the req
 - `lib/streak.test.ts` — new
 - `lib/claude-plan.ts` — new
 - `lib/throttle.ts` — new
-- `components/ProgressChart.tsx` — implemented (was stub)
+- `components/ProgressChart.tsx` — implemented (was stub); post-QA fix added per-subject horizontal bar chart + improved weak-subject flagging
 - `components/StreakTracker.tsx` — implemented (was stub)
 - `app/student/tracker/page.tsx` — implemented (was null stub)
 - `app/api/generate/route.ts` — plan branch + throttle + options type update

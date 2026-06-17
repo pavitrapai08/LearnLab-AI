@@ -13,7 +13,7 @@ A running record so we both always know **what's covered and what's pending**. W
 | P1 | Upload → extract + Quiz generator | ✅ Done | 2026-06-17 | [PHASE_1.md](phases/PHASE_1.md) |
 | P2 | Flashcards + Summariser + study mode | ✅ Done | 2026-06-17 | [PHASE_2.md](phases/PHASE_2.md) |
 | P3 | AI Tutor (streaming) + Lesson plan + PDF export | ✅ Done | 2026-06-17 | [PHASE_3.md](phases/PHASE_3.md) |
-| P4 | Planner + tracker, charts, streak, throttling, polish | 🟡 In progress | 2026-06-17 | [PHASE_4.md](phases/PHASE_4.md) |
+| P4 | Planner + tracker, charts, streak, throttling, polish | ✅ Done | 2026-06-17 | [PHASE_4.md](phases/PHASE_4.md) |
 | P5 | Cross-device sync (email magic-link / OTP) | ⬜ Not started | — | — |
 | P6 | Security pass, final QA & go-live | ⬜ Not started | — | — |
 
