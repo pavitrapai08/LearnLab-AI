@@ -55,13 +55,13 @@ export default function MobileNav({ persona }: Props) {
 
       {/* Sidebar — desktop only (lg+) */}
       <nav className="hidden w-52 shrink-0 bg-navy lg:flex lg:flex-col">
-        {/* Brand */}
-        <div className="flex items-center gap-2.5 px-4 py-5">
+        {/* Brand — links back to home */}
+        <Link href="/" className="flex items-center gap-2.5 px-4 py-5 hover:opacity-80 transition-opacity">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
             <BookOpen className="h-4 w-4 text-white" />
           </div>
           <span className="text-sm font-bold text-white">LearnLab</span>
-        </div>
+        </Link>
 
         {/* Nav links */}
         <ul className="flex flex-col gap-0.5 px-3 pb-4">
