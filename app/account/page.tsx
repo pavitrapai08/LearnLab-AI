@@ -22,7 +22,7 @@ export default function AccountPage() {
             <p className="text-xs leading-relaxed text-muted-foreground">
               <strong>Privacy.</strong> No personal information is collected unless you choose to
               link an email for cross-device sync. Your study materials are processed and not
-              retained beyond extraction. AI-generated content — verify with your textbook.
+              retained beyond extraction.
             </p>
           </div>
         </div>

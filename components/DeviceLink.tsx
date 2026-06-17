@@ -32,6 +32,15 @@ export default function DeviceLink() {
   const reset = () => { setEmail(''); setOtp(''); setError(''); setView('status') }
   const clearError = () => setError('')
 
+  function resolveAuthError(err: unknown): string {
+    const status = (err as { status?: number }).status
+    const message = (err instanceof Error ? err.message : (err as { message?: string }).message) ?? ''
+    if (status === 429 || /rate.?limit|too many/i.test(message)) {
+      return 'Too many email attempts. Please wait a few minutes and try again.'
+    }
+    return message || 'Something went wrong. Please try again.'
+  }
+
   // ── Path A — link email to current anonymous user ──────────────────────────
   const handleLinkEmail = async () => {
     if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return }
@@ -40,13 +49,11 @@ export default function DeviceLink() {
       await linkEmail(email)
       setView('link-sent')
     } catch (err: unknown) {
-      const msg = (err instanceof Error ? err.message : '').toLowerCase()
+      const msg = (err instanceof Error ? err.message : (err as { message?: string }).message ?? '').toLowerCase()
       if (msg.includes('already') || msg.includes('registered')) {
-        setError(
-          'This email already belongs to another account. Use "I already use LearnLab" to sign in with it instead.',
-        )
+        setError('This email already belongs to another account. Use "I already use LearnLab" to sign in with it instead.')
       } else {
-        setError('Something went wrong. Please try again.')
+        setError(resolveAuthError(err))
       }
     } finally {
       setLoading(false)
@@ -61,11 +68,11 @@ export default function DeviceLink() {
       await signInWithOtp(email)
       setView('signin-otp')
     } catch (err: unknown) {
-      const msg = (err instanceof Error ? err.message : '').toLowerCase()
-      if (msg.includes('not found') || msg.includes('invalid') || msg.includes('no user')) {
+      const msg = (err instanceof Error ? err.message : (err as { message?: string }).message ?? '').toLowerCase()
+      if (msg.includes('not found') || msg.includes('no user')) {
         setError('No LearnLab account found for this email. Have you linked it on another device?')
       } else {
-        setError('Something went wrong. Please try again.')
+        setError(resolveAuthError(err))
       }
     } finally {
       setLoading(false)
