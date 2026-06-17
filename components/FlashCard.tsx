@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Focus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -23,6 +23,7 @@ const RATINGS: { value: Rating; label: string; cls: string }[] = [
 ]
 
 export default function FlashCard({ cards, onRatingChange }: Props) {
+  const reducedMotion = useReducedMotion()
   const [focusMode, setFocusMode] = useState(false)
   const [flipped, setFlipped] = useState(false)
   const [index, setIndex] = useState(0)
@@ -95,7 +96,7 @@ export default function FlashCard({ cards, onRatingChange }: Props) {
       >
         <motion.div
           animate={{ rotateY: flipped ? 180 : 0 }}
-          transition={{ duration: 0.35, ease: 'easeInOut' }}
+          transition={reducedMotion ? { duration: 0 } : { duration: 0.35, ease: 'easeInOut' }}
           style={{ transformStyle: 'preserve-3d' }}
           className="absolute inset-0"
         >

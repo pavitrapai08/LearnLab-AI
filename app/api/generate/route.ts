@@ -3,6 +3,8 @@ import { createClient, getVerifiedUser } from '@/lib/supabase/server'
 import { generateQuiz, gradeAnswers, generateFlashcards, generateSummary } from '@/lib/claude'
 import type { GradeItem } from '@/lib/claude'
 import { generateLessonPlan } from '@/lib/claude-lesson'
+import { generateStudyPlan } from '@/lib/claude-plan'
+import { checkRateLimit } from '@/lib/throttle'
 
 export const maxDuration = 60
 
@@ -14,6 +16,9 @@ export async function POST(req: NextRequest) {
   const user = await getVerifiedUser()
   if (!user) return err('UNAUTHORIZED', 'Not authenticated', 401)
   const uid = user.id
+
+  const { limited } = await checkRateLimit(req, 'generate')
+  if (limited) return err('RATE_LIMITED', 'Too many requests — please wait a moment', 429)
 
   let body: {
     type: string
@@ -29,6 +34,8 @@ export async function POST(req: NextRequest) {
       items?: GradeItem[]
       topic?: string
       durationMin?: number
+      examDate?: string
+      subjects?: string[]
     }
   }
   try {
@@ -70,6 +77,40 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (dbErr || !saved) return err('GENERATION_FAILED', 'Could not save lesson plan', 500)
+    return NextResponse.json({ planId: saved.id, plan, subject, grade, outputLanguage })
+  }
+
+  // ── Study plan (no document required) ────────────────────
+  if (type === 'plan') {
+    const examDate = options?.examDate?.trim()
+    const subjects = options?.subjects?.filter(Boolean)
+    if (!examDate) return err('BAD_REQUEST', 'examDate is required for study plans', 400)
+    if (!subjects?.length) return err('BAD_REQUEST', 'At least one subject is required', 400)
+
+    const todayDate = new Date().toISOString().slice(0, 10)
+
+    let plan
+    try {
+      plan = await generateStudyPlan({ examDate, subjects, grade, outputLanguage, todayDate })
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : ''
+      if (msg === 'INVALID_DATE') return err('BAD_REQUEST', 'Exam date must be in the future', 400)
+      if (msg === 'PARSE_FAILED') return err('PARSE_FAILED', 'AI returned invalid JSON after retry', 500)
+      return err('GENERATION_FAILED', 'Study plan generation failed', 500)
+    }
+
+    const { data: saved, error: dbErr } = await supabase
+      .from('study_plans')
+      .insert({
+        session_id: uid,
+        exam_date: examDate,
+        subjects,
+        schedule: plan.schedule,
+      })
+      .select('id')
+      .single()
+
+    if (dbErr || !saved) return err('GENERATION_FAILED', 'Could not save study plan', 500)
     return NextResponse.json({ planId: saved.id, plan, subject, grade, outputLanguage })
   }
 

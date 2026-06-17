@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient, getVerifiedUser } from '@/lib/supabase/server'
+import { checkRateLimit } from '@/lib/throttle'
 import type { SourceType } from '@/lib/validation'
 import { detectRoute } from '@/lib/extract/route-detect'
 import { extractDocxText } from '@/lib/extract/docx'
@@ -17,6 +18,9 @@ export async function POST(req: NextRequest) {
   const user = await getVerifiedUser()
   if (!user) return err('UNAUTHORIZED', 'Not authenticated', 401)
   const uid = user.id
+
+  const { limited } = await checkRateLimit(req, 'process')
+  if (limited) return err('RATE_LIMITED', 'Too many requests — please wait a moment', 429)
 
   let body: {
     storagePath?: string
