@@ -1,6 +1,6 @@
 # Phase 1 — Upload → Extract pipeline + Quiz Generator
 
-**Status:** 🟡 In progress · **Started:** 2026-06-16
+**Status:** ✅ Done · **Started:** 2026-06-16 · **Completed:** 2026-06-17
 
 **Objective:** the core spine — get real content in (the Vercel-safe way) and produce a textbook-specific quiz from it.
 
