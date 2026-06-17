@@ -1,6 +1,6 @@
 # Phase 5 — Cross-device sync (optional email magic-link / OTP)
 
-**Status:** 🟡 In progress · **Started:** 2026-06-17
+**Status:** ✅ Done · **Started:** 2026-06-17 · **Completed:** 2026-06-17
 
 **Objective:** let a user reach their data on a second device by attaching an email to their existing anonymous user — real two-way sync, no full login, no hand-rolled auth. See `TECH_SPEC.md §3.4`.
 
@@ -29,40 +29,42 @@
    - **`link-sent`:** "Check your inbox" with expiry note. Cancel resets to status.
    - **`signin-email`:** warning note that anonymous data won't carry over + email input → `signInWithOtp()` → `signin-otp`. Error handling: no account found for email.
    - **`signin-otp`:** 6-digit numeric input (`inputMode="numeric"`, `autoComplete="one-time-code"`) → `verifyOtp()` → `window.location.reload()`. Resend button calls `signInWithOtp` again.
-- [x] 4. `app/account/page.tsx` — "Sync & Account" page hosting `DeviceLink`. Accessible from nav for both personas. Includes privacy note (no PII unless email is linked).
-- [x] 5. `components/MobileNav.tsx` — "Account" nav item (UserCircle icon) added to both `STUDENT_NAV` (6 items) and `TEACHER_NAV` (3 items), pointing to `/account`.
+- [x] 4. `app/account/page.tsx` — "Sync & Account" page hosting `DeviceLink`. Reads `searchParams.persona` to render the correct sidebar. Includes privacy note (no PII unless email is linked).
+- [x] 5. `components/MobileNav.tsx` — "Account" nav item (UserCircle icon) added to both `STUDENT_NAV` (6 items) and `TEACHER_NAV` (3 items); teacher entry uses `/account?persona=teacher`; active detection strips `?query` before pathname compare; brand logo/name wrapped in `<Link href="/">` for home navigation.
 - [x] 6. `npm run build` — clean, 17 routes (added `/account`, `/auth/callback`).
 
 ---
 
 ## Acceptance criteria
 
-- [ ] A user can link an email on device A without losing any existing data (same `uid`).
-- [ ] Signing in with that email on device B shows **all** of device A's quizzes, decks, summaries, scores, and streak.
-- [ ] New data created on device B appears on device A after refresh (two-way).
-- [ ] Users who never link an email are unaffected and keep a per-device session.
+- [x] A user can link an email on device A without losing any existing data (same `uid`) — **[YOU]** confirmed.
+- [x] Signing in with that email on device B shows **all** of device A's quizzes, decks, summaries, scores, and streak — **[YOU]** confirmed.
+- [x] New data created on device B appears on device A after refresh (two-way) — **[YOU]** confirmed.
+- [x] Users who never link an email are unaffected and keep a per-device session — **[YOU]** confirmed.
 
 ---
 
-## QA checks (all **[YOU]** unless noted)
+## QA checks
 
-- [ ] **[YOU]** *Real sync (most important):* study in browser A, link an email, sign in on a **different browser/device** with that email → existing data appears.
-- [ ] **[CC]** *No data loss on link:* linking an email preserves the current session's data (uid unchanged) — `auth.uid()` is identical before and after `updateUser({ email })`.
-- [ ] **[CC]** *RLS still holds:* a user who has NOT been given the email/OTP cannot read another user's rows.
-- [ ] **[YOU]** *Deploy-only failure (critical):* trigger a magic link on the **deployed preview URL** and confirm it redirects back to the deployed app, **not** `localhost`.
-- [ ] **[YOU]** *Edge cases:* expired/wrong OTP → "Incorrect or expired code" + Resend button; unconfirmed email → "Check your inbox" pending state; email already registered → "already belongs to another account, sign in instead" inline link.
-- [ ] **[YOU]** *No PII without opt-in:* a user who never links shows "Saved to the cloud" copy; `auth.users.email` is null; Terms reflects no PII unless cross-device is enabled.
-- [ ] **[YOU]** *Responsive:* Account page / DeviceLink UI at 375px; verify 768/1280.
+- [x] **[YOU]** *Real sync (most important):* study in browser A, link an email, sign in on a **different browser/device** with that email → existing data appears — **[YOU]** confirmed.
+- [x] **[CC]** *No data loss on link:* linking an email preserves the current session's data (uid unchanged) — `auth.uid()` is identical before and after `updateUser({ email })`.
+- [x] **[CC]** *RLS still holds:* a user who has NOT been given the email/OTP cannot read another user's rows.
+- [x] **[YOU]** *Deploy-only failure (critical):* trigger a magic link on the **deployed preview URL** and confirm it redirects back to the deployed app, **not** `localhost` — **[YOU]** confirmed.
+- [x] **[YOU]** *Edge cases:* expired/wrong OTP → "Incorrect or expired code" + Resend button; unconfirmed email → "Check your inbox" pending state; email already registered → "already belongs to another account, sign in instead" inline link — **[YOU]** confirmed.
+- [x] **[YOU]** *No PII without opt-in:* a user who never links shows "Saved to the cloud" copy; `auth.users.email` is null; privacy note reflects no PII unless cross-device is enabled — **[YOU]** confirmed.
+- [x] **[YOU]** *Responsive:* Account page / DeviceLink UI at 375px; verify 768/1280 — **[YOU]** confirmed.
 
 ---
 
 ## Deviations / decisions
 
-- **`shouldCreateUser: false`** in `signInWithOtp` — prevents a new account being minted if a user mistypes or enters an unregistered email on the sign-in path. Supabase returns an error in this case which we surface as "No LearnLab account found for this email."
-- **`emailRedirectTo` set at call time** using `window.location.origin + '/auth/callback'`. This dynamically adapts to the domain (localhost / preview / production) without needing a hard-coded env var — as long as Supabase's Redirect URLs whitelist the production and preview domains.
+- **`shouldCreateUser: false`** in `signInWithOtp` — prevents a new account being minted if a user mistypes or enters an unregistered email on the sign-in path. Supabase returns an error which is surfaced as "No LearnLab account found for this email."
+- **`emailRedirectTo` set at call time** using `window.location.origin + '/auth/callback'`. Dynamically adapts to the domain (localhost / preview / production) without a hard-coded env var — as long as Supabase's Redirect URLs whitelist the production and preview domains.
 - **Auth callback handles both PKCE and magic-link flows** — `?code=` for PKCE, `?token_hash=&type=` for magic links and email changes. Both produce a valid Supabase session via `@supabase/ssr`.
-- **Account page uses student MobileNav** — teacher personas also access `/account` and will see the student nav; acceptable for a portfolio app where the account settings are persona-agnostic.
-- **Signed-out state** — after `signOut()`, the browser redirects to `/` where `AuthProvider` calls `ensureAnonymousSession()`, starting a fresh anonymous session. The previous linked session data is no longer accessible on this device.
+- **Post-QA fix — sidebar persona bug:** `/account` initially always rendered the student sidebar. Fixed by passing `?persona=teacher` from the teacher nav entry and reading `searchParams.persona` in `app/account/page.tsx`. Active detection in `MobileNav` updated to strip `?query` before pathname comparison (`href.split('?')[0]`).
+- **Post-QA fix — error messages:** generic "Something went wrong" fallback replaced with `error.message` passed through directly; HTTP 429 maps to a specific "Too many email attempts" message; AI disclaimer removed from account page privacy note (irrelevant on a sync page).
+- **Post-QA improvement — brand as home link:** `MobileNav` sidebar brand (logo + "LearnLab" text) wrapped in `<Link href="/">` so both personas can return to the home page from any section.
+- **Signed-out state** — after `signOut()`, the browser redirects to `/` where `AuthProvider` calls `ensureAnonymousSession()`, starting a fresh anonymous session. The previous linked session's data is no longer accessible on this device.
 
 ---
 
@@ -70,6 +72,6 @@
 
 - `lib/auth.ts` — added `signOut`, `verifyOtp`; updated `linkEmail`, `signInWithOtp` with `emailRedirectTo` and `shouldCreateUser:false`
 - `app/auth/callback/route.ts` — new
-- `components/DeviceLink.tsx` — implemented (was null stub)
-- `app/account/page.tsx` — new
-- `components/MobileNav.tsx` — Account nav item added to both personas
+- `components/DeviceLink.tsx` — implemented (was null stub); post-QA: improved error messages (429 → specific rate-limit copy, others pass `error.message` through)
+- `app/account/page.tsx` — new; post-QA: reads `searchParams.persona` to render correct sidebar; removed AI disclaimer from privacy note
+- `components/MobileNav.tsx` — Account nav item added to both personas; post-QA: teacher Account link uses `?persona=teacher`; active detection strips query params; brand wrapped in home link
