@@ -3,9 +3,9 @@ import { BookOpen, GraduationCap, ChevronRight } from 'lucide-react'
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#A8C8EC] via-[#B5D8E8] to-[#9FD4C0] p-6">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#0D9A8F] via-[#0C8A9C] to-[#0F6E9A] p-6">
       {/* Logo mark */}
-      <div className="mb-4 flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-navy">
+      <div className="mb-4 flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
         <BookOpen className="h-6 w-6 text-white" />
       </div>
 
@@ -19,21 +19,21 @@ export default function Home() {
         {/* Student */}
         <Link
           href="/student/quiz"
-          className="group flex flex-1 flex-col gap-4 rounded-2xl border border-white/60 bg-white/90 p-6 shadow-sm backdrop-blur-sm transition-all hover:border-primary hover:shadow-md"
+          className="group flex flex-1 flex-col gap-4 rounded-2xl border border-white/15 bg-[#1A1F36]/55 p-6 backdrop-blur-md transition-all hover:border-white/30 hover:bg-[#1A1F36]/65"
         >
           <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#EEF4FF]">
-              <BookOpen className="h-5 w-5 text-primary" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
+              <BookOpen className="h-5 w-5 text-white" />
             </div>
-            <ChevronRight className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" />
+            <ChevronRight className="h-5 w-5 text-white/40 transition-colors group-hover:text-white/80" />
           </div>
           <div>
-            <p className="font-semibold text-navy">Student</p>
+            <p className="font-semibold text-white">Student</p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {['Quiz', 'Flashcards', 'Summary', 'Tutor', 'Planner'].map(tag => (
                 <span
                   key={tag}
-                  className="rounded-full bg-[#EEF4FF] px-2.5 py-0.5 text-[11px] font-medium text-primary"
+                  className="rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-white/80"
                 >
                   {tag}
                 </span>
@@ -45,21 +45,21 @@ export default function Home() {
         {/* Teacher */}
         <Link
           href="/teacher/quiz"
-          className="group flex flex-1 flex-col gap-4 rounded-2xl border border-white/60 bg-white/90 p-6 shadow-sm backdrop-blur-sm transition-all hover:border-primary hover:shadow-md"
+          className="group flex flex-1 flex-col gap-4 rounded-2xl border border-white/15 bg-[#1A1F36]/55 p-6 backdrop-blur-md transition-all hover:border-white/30 hover:bg-[#1A1F36]/65"
         >
           <div className="flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#ECFDF5]">
-              <GraduationCap className="h-5 w-5 text-emerald" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
+              <GraduationCap className="h-5 w-5 text-white" />
             </div>
-            <ChevronRight className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" />
+            <ChevronRight className="h-5 w-5 text-white/40 transition-colors group-hover:text-white/80" />
           </div>
           <div>
-            <p className="font-semibold text-navy">Teacher</p>
+            <p className="font-semibold text-white">Teacher</p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {['Quiz Generator', 'Lesson Plan'].map(tag => (
                 <span
                   key={tag}
-                  className="rounded-full bg-[#ECFDF5] px-2.5 py-0.5 text-[11px] font-medium text-emerald"
+                  className="rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-white/80"
                 >
                   {tag}
                 </span>
@@ -70,10 +70,10 @@ export default function Home() {
       </div>
 
       <div className="mt-8 flex flex-col items-center gap-2">
-        <p className="text-xs text-white/70">AI-generated — verify with your textbook.</p>
+        <p className="text-xs text-white/60">AI-generated — verify with your textbook.</p>
         <Link
           href="/terms"
-          className="text-xs text-white/70 underline underline-offset-2 hover:text-white"
+          className="text-xs text-white/60 underline underline-offset-2 hover:text-white/90"
         >
           Terms &amp; Privacy
         </Link>
