@@ -3,14 +3,14 @@ import { BookOpen, GraduationCap, ChevronRight } from 'lucide-react'
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#EEF4FF] via-[#F7F8FC] to-white p-6">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#A8C8EC] via-[#B5D8E8] to-[#9FD4C0] p-6">
       {/* Logo mark */}
       <div className="mb-4 flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-navy">
         <BookOpen className="h-6 w-6 text-white" />
       </div>
 
-      <h1 className="mb-1 text-[28px] font-bold text-navy">LearnLab AI</h1>
-      <p className="mb-10 max-w-xs text-center text-sm text-muted-foreground">
+      <h1 className="mb-1 text-[28px] font-bold text-white drop-shadow-sm">LearnLab AI</h1>
+      <p className="mb-10 max-w-xs text-center text-sm text-white/80">
         Turn your study material into quizzes, flashcards, summaries, and more.
       </p>
 
@@ -19,7 +19,7 @@ export default function Home() {
         {/* Student */}
         <Link
           href="/student/quiz"
-          className="group flex flex-1 flex-col gap-4 rounded-2xl border border-[#E5E7EB] bg-white p-6 transition-colors hover:border-primary"
+          className="group flex flex-1 flex-col gap-4 rounded-2xl border border-white/60 bg-white/90 p-6 shadow-sm backdrop-blur-sm transition-all hover:border-primary hover:shadow-md"
         >
           <div className="flex items-center justify-between">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#EEF4FF]">
@@ -45,7 +45,7 @@ export default function Home() {
         {/* Teacher */}
         <Link
           href="/teacher/quiz"
-          className="group flex flex-1 flex-col gap-4 rounded-2xl border border-[#E5E7EB] bg-white p-6 transition-colors hover:border-primary"
+          className="group flex flex-1 flex-col gap-4 rounded-2xl border border-white/60 bg-white/90 p-6 shadow-sm backdrop-blur-sm transition-all hover:border-primary hover:shadow-md"
         >
           <div className="flex items-center justify-between">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#ECFDF5]">
@@ -70,10 +70,10 @@ export default function Home() {
       </div>
 
       <div className="mt-8 flex flex-col items-center gap-2">
-        <p className="text-xs text-muted-foreground">AI-generated — verify with your textbook.</p>
+        <p className="text-xs text-white/70">AI-generated — verify with your textbook.</p>
         <Link
           href="/terms"
-          className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+          className="text-xs text-white/70 underline underline-offset-2 hover:text-white"
         >
           Terms &amp; Privacy
         </Link>
