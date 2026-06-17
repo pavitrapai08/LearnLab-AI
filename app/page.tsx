@@ -69,7 +69,15 @@ export default function Home() {
         </Link>
       </div>
 
-      <p className="mt-8 text-xs text-muted-foreground">AI-generated — verify with your textbook.</p>
+      <div className="mt-8 flex flex-col items-center gap-2">
+        <p className="text-xs text-muted-foreground">AI-generated — verify with your textbook.</p>
+        <Link
+          href="/terms"
+          className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+        >
+          Terms &amp; Privacy
+        </Link>
+      </div>
     </main>
   )
 }
