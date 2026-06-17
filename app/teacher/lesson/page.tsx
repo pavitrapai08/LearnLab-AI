@@ -121,7 +121,7 @@ export default function TeacherLessonPage() {
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">{durationMin} min · {subject} · {grade}</p>
                 <div className="flex gap-2">
-                  <ExportPDF targetRef={resultRef} filename={pdfFilename} label="Export PDF" />
+                  <ExportPDF targetRef={resultRef} filename={pdfFilename} label="Export PDF" title={topic} />
                   <Button variant="ghost" size="sm" onClick={reset} className="gap-1">
                     <RotateCcw className="h-3 w-3" /> New plan
                   </Button>

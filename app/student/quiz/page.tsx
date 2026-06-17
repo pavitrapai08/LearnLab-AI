@@ -196,7 +196,7 @@ export default function StudentQuizPage() {
                 <AiDisclaimer />
               </div>
               <div className="flex gap-2">
-                <ExportPDF targetRef={resultsRef} filename="quiz-results.pdf" label="Download results" />
+                <ExportPDF targetRef={resultsRef} filename="quiz-results.pdf" label="Download results" title={`Quiz Results — ${subject} · ${grade}`} />
                 <Button onClick={reset} variant="outline" className="gap-2">
                   <RotateCcw className="h-4 w-4" /> Start over
                 </Button>
