@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BookOpen, Layers, FileText, MessageCircle, Calendar, GraduationCap } from 'lucide-react'
+import { BookOpen, Layers, FileText, MessageCircle, Calendar, GraduationCap, UserCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }> }
@@ -13,11 +13,13 @@ const STUDENT_NAV: NavItem[] = [
   { href: '/student/summariser',  label: 'Summary',    icon: FileText },
   { href: '/student/tutor',       label: 'Tutor',      icon: MessageCircle },
   { href: '/student/tracker',     label: 'Planner',    icon: Calendar },
+  { href: '/account',             label: 'Account',    icon: UserCircle },
 ]
 
 const TEACHER_NAV: NavItem[] = [
-  { href: '/teacher/quiz',   label: 'Quiz',   icon: BookOpen },
-  { href: '/teacher/lesson', label: 'Lesson', icon: GraduationCap },
+  { href: '/teacher/quiz',   label: 'Quiz',    icon: BookOpen },
+  { href: '/teacher/lesson', label: 'Lesson',  icon: GraduationCap },
+  { href: '/account',        label: 'Account', icon: UserCircle },
 ]
 
 type Props = { persona: 'student' | 'teacher' }

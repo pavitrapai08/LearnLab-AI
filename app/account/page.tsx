@@ -1,0 +1,32 @@
+import { Link2 } from 'lucide-react'
+import MobileNav from '@/components/MobileNav'
+import DeviceLink from '@/components/DeviceLink'
+
+// Sync & Account page — accessible from the nav for both student and teacher personas.
+// Hosts DeviceLink which handles the full anonymous→email link and cross-device sign-in flows.
+export default function AccountPage() {
+  return (
+    <div className="flex min-h-screen flex-col lg:flex-row">
+      <MobileNav persona="student" />
+      <main className="flex-1 px-4 pb-24 pt-6 lg:pl-0 lg:pr-8">
+        <div className="mx-auto max-w-md">
+          <div className="mb-6 flex items-center gap-2">
+            <Link2 className="h-5 w-5 text-primary" />
+            <h1 className="text-xl font-bold">Sync &amp; Account</h1>
+          </div>
+
+          <DeviceLink />
+
+          {/* Privacy note */}
+          <div className="mt-8 border-t pt-6">
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              <strong>Privacy.</strong> No personal information is collected unless you choose to
+              link an email for cross-device sync. Your study materials are processed and not
+              retained beyond extraction. AI-generated content — verify with your textbook.
+            </p>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
