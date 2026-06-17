@@ -2,12 +2,18 @@ import { Link2 } from 'lucide-react'
 import MobileNav from '@/components/MobileNav'
 import DeviceLink from '@/components/DeviceLink'
 
-// Sync & Account page — accessible from the nav for both student and teacher personas.
-// Hosts DeviceLink which handles the full anonymous→email link and cross-device sign-in flows.
-export default function AccountPage() {
+// Persona is carried via ?persona=teacher from the teacher nav; defaults to student.
+// This keeps the correct sidebar visible regardless of which section the user came from.
+export default function AccountPage({
+  searchParams,
+}: {
+  searchParams: { persona?: string }
+}) {
+  const persona = searchParams.persona === 'teacher' ? 'teacher' : 'student'
+
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
-      <MobileNav persona="student" />
+      <MobileNav persona={persona} />
       <main className="flex-1 px-4 pb-24 pt-6 lg:pl-0 lg:pr-8">
         <div className="mx-auto max-w-md">
           <div className="mb-6 flex items-center gap-2">
@@ -17,7 +23,6 @@ export default function AccountPage() {
 
           <DeviceLink />
 
-          {/* Privacy note */}
           <div className="mt-8 border-t pt-6">
             <p className="text-xs leading-relaxed text-muted-foreground">
               <strong>Privacy.</strong> No personal information is collected unless you choose to

@@ -17,9 +17,9 @@ const STUDENT_NAV: NavItem[] = [
 ]
 
 const TEACHER_NAV: NavItem[] = [
-  { href: '/teacher/quiz',   label: 'Quiz',    icon: BookOpen },
-  { href: '/teacher/lesson', label: 'Lesson',  icon: GraduationCap },
-  { href: '/account',        label: 'Account', icon: UserCircle },
+  { href: '/teacher/quiz',            label: 'Quiz',    icon: BookOpen },
+  { href: '/teacher/lesson',          label: 'Lesson',  icon: GraduationCap },
+  { href: '/account?persona=teacher', label: 'Account', icon: UserCircle },
 ]
 
 type Props = { persona: 'student' | 'teacher' }
@@ -34,7 +34,7 @@ export default function MobileNav({ persona }: Props) {
       <nav className="fixed bottom-0 left-0 right-0 z-[100] border-t border-white/10 bg-navy lg:hidden">
         <ul className="flex justify-around">
           {items.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href
+            const active = pathname === href.split('?')[0]
             return (
               <li key={href} className="flex-1">
                 <Link
@@ -66,7 +66,7 @@ export default function MobileNav({ persona }: Props) {
         {/* Nav links */}
         <ul className="flex flex-col gap-0.5 px-3 pb-4">
           {items.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href
+            const active = pathname === href.split('?')[0]
             return (
               <li key={href} className="relative">
                 <Link
