@@ -39,6 +39,11 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // Brand palette — hex literals used directly in class names
+        navy:    '#1A1F36',
+        cloud:   '#F7F8FC',
+        emerald: '#10B981',
+        amber:   '#F59E0B',
       },
       borderRadius: {
         lg: 'var(--radius)',

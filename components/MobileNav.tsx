@@ -8,15 +8,15 @@ import { cn } from '@/lib/utils'
 type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }> }
 
 const STUDENT_NAV: NavItem[] = [
-  { href: '/student/quiz', label: 'Quiz', icon: BookOpen },
-  { href: '/student/flashcards', label: 'Flashcards', icon: Layers },
-  { href: '/student/summariser', label: 'Summary', icon: FileText },
-  { href: '/student/tutor', label: 'Tutor', icon: MessageCircle },
-  { href: '/student/tracker', label: 'Planner', icon: Calendar },
+  { href: '/student/quiz',        label: 'Quiz',       icon: BookOpen },
+  { href: '/student/flashcards',  label: 'Flashcards', icon: Layers },
+  { href: '/student/summariser',  label: 'Summary',    icon: FileText },
+  { href: '/student/tutor',       label: 'Tutor',      icon: MessageCircle },
+  { href: '/student/tracker',     label: 'Planner',    icon: Calendar },
 ]
 
 const TEACHER_NAV: NavItem[] = [
-  { href: '/teacher/quiz', label: 'Quiz', icon: BookOpen },
+  { href: '/teacher/quiz',   label: 'Quiz',   icon: BookOpen },
   { href: '/teacher/lesson', label: 'Lesson', icon: GraduationCap },
 ]
 
@@ -29,7 +29,7 @@ export default function MobileNav({ persona }: Props) {
   return (
     <>
       {/* Bottom nav — mobile only */}
-      <nav className="fixed bottom-0 left-0 right-0 z-[100] border-t bg-background lg:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-[100] border-t border-white/10 bg-navy lg:hidden">
         <ul className="flex justify-around">
           {items.map(({ href, label, icon: Icon }) => {
             const active = pathname === href
@@ -39,7 +39,7 @@ export default function MobileNav({ persona }: Props) {
                   href={href}
                   className={cn(
                     'flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors',
-                    active ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+                    active ? 'text-white' : 'text-white/50 hover:text-white/75',
                   )}
                 >
                   <Icon className="h-5 w-5" />
@@ -50,25 +50,39 @@ export default function MobileNav({ persona }: Props) {
           })}
         </ul>
       </nav>
+
       {/* Sidebar — desktop only (lg+) */}
-      <nav className="hidden w-52 shrink-0 lg:block">
-        <ul className="flex flex-col gap-1 pt-2">
+      <nav className="hidden w-52 shrink-0 bg-navy lg:flex lg:flex-col">
+        {/* Brand */}
+        <div className="flex items-center gap-2.5 px-4 py-5">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
+            <BookOpen className="h-4 w-4 text-white" />
+          </div>
+          <span className="text-sm font-bold text-white">LearnLab</span>
+        </div>
+
+        {/* Nav links */}
+        <ul className="flex flex-col gap-0.5 px-3 pb-4">
           {items.map(({ href, label, icon: Icon }) => {
             const active = pathname === href
             return (
-              <li key={href}>
+              <li key={href} className="relative">
                 <Link
                   href={href}
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                     active
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                      ? 'bg-white/10 text-white'
+                      : 'text-white/50 hover:bg-white/5 hover:text-white/75',
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
                   {label}
                 </Link>
+                {/* Active indicator — blue right-edge bar */}
+                {active && (
+                  <span className="absolute right-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-l-full bg-primary" />
+                )}
               </li>
             )
           })}
