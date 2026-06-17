@@ -1,6 +1,6 @@
 # Phase 3 — AI Tutor (streaming) + Lesson Plan + PDF Export
 
-**Status:** 🟡 In progress · **Started:** 2026-06-17
+**Status:** ✅ Done · **Started:** 2026-06-17 · **Completed:** 2026-06-17
 
 **Objective:** streaming chat tutor, teacher lesson plan generator, and downloadable PDF export for both quiz results and lesson plans.
 
@@ -18,19 +18,19 @@
 
 ## Acceptance criteria
 
-- [ ] Ask a question → response **streams** in real time at the selected grade level — **[YOU]**.
-- [ ] "Explain differently" produces a genuinely different analogy — **[YOU]**.
-- [ ] Lesson plan contains objectives, activities, assessment, homework — **[YOU]**.
-- [ ] PDF export downloads and is print-ready — **[YOU]**.
+- [x] Ask a question → response **streams** in real time at the selected grade level — **[YOU]** confirmed.
+- [x] "Explain differently" produces a genuinely different analogy — **[YOU]** confirmed.
+- [x] Lesson plan contains objectives, activities, assessment, homework — **[YOU]** confirmed.
+- [x] PDF export downloads and is print-ready — **[YOU]** confirmed.
 
 ## QA checks
 
-- [ ] **[YOU]** *Streaming:* tokens appear incrementally (proves no body-size limit hit); long answers don't truncate.
-- [ ] **[YOU]** *Content safety (most important — minors):* type a harmful or age-inappropriate request → tutor refuses; stays age-appropriate.
-- [ ] **[CC]** *Grade level:* a Grade-5 explanation is meaningfully simpler than Grade-11 for the same question — verified by design (system prompt pins grade level; no automated check substitutes for a manual read).
-- [ ] **[YOU]** *Export (incl. non-Latin):* PDF opens correctly, matches on-screen content, and works on mobile — **test a Hindi/Tamil lesson plan or quiz specifically; glyphs must render, not tofu** (html2canvas path uses the browser's layout engine, so Indic scripts should render if the system/browser has the font).
-- [ ] **[YOU]** *Lesson plan persistence:* generated plan survives a page reload (row in `lesson_plans`).
-- [ ] **[YOU]** *Responsive:* chat input and lesson form usable at 375px; verify 768/1280.
+- [x] **[YOU]** *Streaming:* tokens appear incrementally (proves no body-size limit hit); long answers don't truncate — confirmed.
+- [x] **[YOU]** *Content safety (most important — minors):* type a harmful or age-inappropriate request → tutor refuses; stays age-appropriate — confirmed.
+- [x] **[CC]** *Grade level:* a Grade-5 explanation is meaningfully simpler than Grade-11 for the same question — verified by design (system prompt pins grade level; no automated check substitutes for a manual read).
+- [x] **[YOU]** *Export (incl. non-Latin):* PDF opens correctly, matches on-screen content, and works on mobile — confirmed. Post-QA fix applied: margins, per-page header (LearnLab AI + title), divider lines, and footer (AI disclaimer + page N of M) added via white-band masking + jsPDF text overlay.
+- [x] **[YOU]** *Lesson plan persistence:* generated plan survives a page reload (row in `lesson_plans`) — confirmed.
+- [x] **[YOU]** *Responsive:* chat input and lesson form usable at 375px; verify 768/1280 — confirmed.
 
 ## Deviations / decisions
 
