@@ -69,8 +69,7 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="mt-8 flex flex-col items-center gap-2">
-        <p className="text-xs text-white/60">AI-generated — verify with your textbook.</p>
+      <div className="mt-8">
         <Link
           href="/terms"
           className="text-xs text-white/60 underline underline-offset-2 hover:text-white/90"
