@@ -3,7 +3,7 @@ import { BookOpen, GraduationCap, ChevronRight } from 'lucide-react'
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-cloud p-6">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#EEF4FF] via-[#F7F8FC] to-white p-6">
       {/* Logo mark */}
       <div className="mb-4 flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-navy">
         <BookOpen className="h-6 w-6 text-white" />
