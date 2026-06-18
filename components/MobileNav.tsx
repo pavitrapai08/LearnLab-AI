@@ -30,6 +30,16 @@ export default function MobileNav({ persona }: Props) {
 
   return (
     <>
+      {/* Top header — mobile only, links back to home */}
+      <header className="flex items-center border-b border-border bg-white px-4 py-3 lg:hidden">
+        <Link href="/" className="flex items-center gap-2 hover:opacity-75 transition-opacity">
+          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-navy">
+            <BookOpen className="h-3.5 w-3.5 text-white" />
+          </div>
+          <span className="text-sm font-bold text-navy">LearnLab</span>
+        </Link>
+      </header>
+
       {/* Bottom nav — mobile only */}
       <nav className="fixed bottom-0 left-0 right-0 z-[100] border-t border-white/10 bg-navy lg:hidden">
         <ul className="flex justify-around">
