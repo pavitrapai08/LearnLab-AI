@@ -57,3 +57,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ── Animated background blobs (section pages) ──────────────────────── */
+@keyframes blob-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(28px, -42px) scale(1.09); }
+  66%       { transform: translate(-22px, 18px) scale(0.94); }
+}
+@keyframes blob-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-32px, 24px) scale(0.91); }
+  66%       { transform: translate(24px, -22px) scale(1.07); }
+}
+@keyframes blob-c {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40%       { transform: translate(18px, 30px) scale(1.05); }
+  75%       { transform: translate(-14px, -18px) scale(0.96); }
+}
+
+/* Pause all blobs when the user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .page-blob { animation: none !important; }
+}
